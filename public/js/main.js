@@ -7,7 +7,7 @@ window.onload = function(){
         var ws = new WebSocket('ws://' + window.location.host + window.location.pathname);
         ws.onopen = function() { show('websocket opened'); };
         ws.onclose = function() { show('websocket closed'); }
-        ws.onmessage = function(m) { show('websocket message: ' + m.data); };
+        ws.onmessage = function(m) { show(m.data); };
     
         var sender = function(f){
             var input = document.getElementById('input');
@@ -19,4 +19,6 @@ window.onload = function(){
             }
         }(document.getElementById('form'));
     })();
-    }
+}
+
+

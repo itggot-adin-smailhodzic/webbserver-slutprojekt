@@ -40,7 +40,7 @@ class App < Sinatra::Base
 		username = params[:username]
 		password = params[:password]
 
-		id, username_verify, password_verify, state, score, highscore = db.execute("SELECT * FROM Users WHERE username = '#{username}'")[0]
+		id, username_verify, password_verify, state = db.execute("SELECT * FROM Users WHERE username = '#{username}'")[0]
 
 		if password_verify != nil
 			password_verify = BCrypt::Password.new(password_verify)
@@ -51,6 +51,7 @@ class App < Sinatra::Base
 		if username == username_verify && password_verify == password
 			# Login successful
 			session[:id] = id
+			session[:username] = username
 			redirect('/profile/' + session[:id].to_s)
 		else
 			slim :error
@@ -111,25 +112,7 @@ class App < Sinatra::Base
 
 		var = 0 
 
-		if !request.websocket?
-			slim(:menu, locals:{notes:result, id:id, i:var})
-		   else
-			request.websocket do |ws|
-			 ws.onopen do
-			  ws.send("Hello World!")
-			  settings.sockets << ws
-			 end
-			 ws.onmessage do |msg|
-			  EM.next_tick { settings.sockets.each{|s| s.send(msg) } }
-			 end
-			 ws.onclose do
-			  warn("websocket closed")
-			  settings.sockets.delete(ws)
-			 end
-			end
-		   end
-		  end
-	  
+		slim(:menu, locals:{notes:result, id:id, i:var})  
 	end
 
 	post '/friend_request' do
@@ -172,27 +155,33 @@ class App < Sinatra::Base
 
 	end
 	
-	set :server, 'thin'
-	set :sockets, []
+		set :server, 'thin'
+		set :sockets, []
 	
-	get '/chatroom/:id' do
-	 if !request.websocket?
-	  slim:room_1
-	 else
-	  request.websocket do |ws|
-	   ws.onopen do
-		ws.send("Hello World!")
-		settings.sockets << ws
-	   end
-	   ws.onmessage do |msg|
-		EM.next_tick { settings.sockets.each{|s| s.send(msg) } }
-	   end
-	   ws.onclose do
-		warn("websocket closed")
-		settings.sockets.delete(ws)
-	   end
-	  end
-	 end
-	end
+	get '/chatroom' do
 
-end           
+		db = SQLite3::Database.new("db/database.db")
+
+		if !request.websocket?
+			slim :room_1
+		else
+			request.websocket do |ws|
+				ws.onopen do
+					ws.send("Hello World!")
+					settings.sockets << ws
+				end
+				ws.onmessage do |msg|
+					EM.next_tick do
+						settings.sockets.each do |s| 
+							s.send("#{session[:username].to_s}" + ": " + msg)
+						end
+					end
+				end
+				ws.onclose do
+					warn("websocket closed")
+					settings.sockets.delete(ws)
+				end
+			end
+		end
+	end
+end         
