@@ -1,5 +1,10 @@
+require_relative './module.rb'	
+include GModule
+
 class App < Sinatra::Base
 
+	set :server, 'thin'
+	set :sockets, []
 	enable :sessions
 
 	get '/' do
@@ -155,12 +160,42 @@ class App < Sinatra::Base
 
 	end
 	
-		set :server, 'thin'
-		set :sockets, []
-	
-	get '/chatroom' do
+	get '/forum' do
 
 		db = SQLite3::Database.new("db/database.db")
+
+		posts =	db.execute('SELECT * FROM Posts WHERE parent_id IS NULL')
+		
+		slim(:forum,locals:{posts:posts})
+
+	end
+
+	get '/post/:id' do
+
+		post_id = params[:id].to_i
+
+		parent_post = urmom(post_id)
+		
+		child_posts = db.execute('SELECT * FROM Posts WHERE parent_id IS ?', [post_id])
+	
+
+		slim(:post, locals:{parent_post:parent_post, child_posts:child_posts})
+
+	end
+
+	post '/create_post' do
+
+		user_id = session[:id]
+
+		create_post(user_id)
+
+	end
+
+	#	Websocket application - Generic Chatroom
+
+	
+	get '/chatroom' do
+		db = db_connect()
 
 		if !request.websocket?
 			slim :room_1
@@ -184,4 +219,5 @@ class App < Sinatra::Base
 			end
 		end
 	end
-end         
+
+end

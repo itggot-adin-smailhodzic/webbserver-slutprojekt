@@ -32,7 +32,7 @@ p = notes
         / You recieved the request
         - elsif note[3] != id && note[2] == 0
 
-            - if note[3] == note[0] && note[2] == 0
+            - if note[3] == note[0] && note[2] == 0 
                 p Pending Friend request to you from #{note[0]}
 
                 form action="/accept_friend" method="POST"
@@ -61,10 +61,12 @@ p = notes
                 - if note[1] != id
                     p You are friends with #{note[1]}
 
-                    a href="#{}"
+                    a href="/chatroom" xd
 
                 - if note[0] != id
                     p You are friends with #{note[0]}
+
+                    a href="/chatroom" xd
 
 /        - while i < 4
             p = note[i]
@@ -72,4 +74,6 @@ p = notes
 
 a href='/chatroom' chat it up
 br   
+a href='/forum' forum it up i guess
+br
 a href='/' Go back.    

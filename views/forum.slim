@@ -1,0 +1,11 @@
+
+form action="/create_post" method="POST"
+        input type="input" placeholder="Write something" name="create_post"
+        input type="submit" value="create"
+
+
+/ post[0]: id for post, post[1]: post title, post[2]: post content, post[3]: authors id, post[4]: (for comments) parent post id, post[5]: upvotes, post[6]: downvotes 
+-for post in posts
+    h3 = post[1]
+    p = post[2]
+    a href="/post/#{post[0]}" see post
