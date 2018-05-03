@@ -6,7 +6,8 @@ module GModule
     end
 
     def register(username,password)
-        db = db.connect()
+        db = db_connect()
+        password_digest = BCrypt::Password.create(password)
         db.execute("INSERT INTO Users(username,password,state) VALUES(?,?,0)", [username,password_digest])
     end
 
@@ -33,7 +34,7 @@ module GModule
     end
 
     def friend_request(user_sender,user_reciever)
-        db = db.connect()
+        db = db_connect()
         user_reciever_id_instance = db.execute("SELECT * FROM Users WHERE id = ?", [user_reciever])
 
 		if user_reciever_id_instance.empty? == false # Checks if the user recipent is non-existant

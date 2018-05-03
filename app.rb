@@ -89,19 +89,17 @@ class App < Sinatra::Base
 
 	post '/friend_request' do
 
-		db = SQLite3::Database.new("db/database.db")
+		user_sender = session[:id]
+		user_reciever = params[:request_user]
 
-		User_sender = session[:id]
-		User_reciever = params[:request_user]
+		user_reciever_compare = user_reciever.to_i
 
-		User_reciever_compare = User_reciever.to_i
-
-		if User_reciever_compare.to_s != User_reciever.to_s
+		if user_reciever_compare.to_s != user_reciever.to_s
 			redirect('/error')
 		end
 
-		User_sender = User_sender.to_i
-		User_reciever = User_reciever.to_i
+		user_sender = user_sender.to_i
+		user_reciever = user_reciever.to_i
 
 		# 0 = Pending, 1 = Accepted, 2 = Denied, 3 = Blocked
 		
