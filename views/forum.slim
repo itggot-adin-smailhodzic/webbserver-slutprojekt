@@ -1,8 +1,16 @@
 
+h2 Post something!
+
 form action="/create_post" method="POST"
-        input type="input" placeholder="Write something" name="create_post"
+        input type="hidden" value="0" name="is_comment"
+        input type="input" placeholder="Title" name="create_post_title"
+        br
+        input type="input" placeholder="Write something" name="create_post_content"
         input type="submit" value="create"
 
+br
+
+h2 Current posts
 
 / post[0]: id for post, post[1]: post title, post[2]: post content, post[3]: authors id, post[4]: (for comments) parent post id, post[5]: upvotes, post[6]: downvotes 
 -for post in posts

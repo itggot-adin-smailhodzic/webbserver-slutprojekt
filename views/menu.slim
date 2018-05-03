@@ -10,16 +10,12 @@ form action="/friend_request" method="POST"
 
 / note[0] = User_1, note[1] = User_2, note[2] = Relation_State, note[3] = who sent the fukkin friend request?
 
-p = notes
-
 .notes
     - notes.each do |note|
-        .note-card
         - i = 0
 
         / You sent the request
-        p = note
-        p = id
+
         - if note[3].to_i == id && note[2].to_i == 0
 
             - if note[3].to_i == note[0].to_i
@@ -61,12 +57,9 @@ p = notes
                 - if note[1] != id
                     p You are friends with #{note[1]}
 
-                    a href="/chatroom" xd
-
                 - if note[0] != id
                     p You are friends with #{note[0]}
 
-                    a href="/chatroom" xd
 
 /        - while i < 4
             p = note[i]
